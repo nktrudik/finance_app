@@ -6,9 +6,8 @@ import shutil
 import os
 from pathlib import Path
 from app import config
-# ✅ Импортируем модели из schemas
-from app.schemas.query import QueryRequest, QueryResponse
-from app.schemas.upload import UploadResponse
+from app.schemas import QueryRequest, UploadResponse
+
 
 
 # ============= СОЗДАНИЕ FASTAPI APP =============
