@@ -1,23 +1,59 @@
 # backend/.gitignore
 
-# Базы данных
+# ===== Переменные окружения (НЕ загружать в Git!) =====
+.env
+.env.*
+!.env.example
+
+# ===== База данных =====
 data/
 *.db
 *.sqlite
 *.sqlite3
 
-# Векторная БД
+# ===== Логи =====
+logs/
+*.log
+
+# ===== Qdrant =====
 qdrant_storage/
 
-# Временные файлы
-temp/
-*.tmp
-
-# Python
+# ===== Python =====
 __pycache__/
-*.pyc
-.venv/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# IDE
+# ===== Виртуальное окружение =====
+.venv/
+venv/
+ENV/
+env/
+
+# ===== IDE =====
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
+
+# ===== Временные файлы =====
+temp/
+tmp/
+*.tmp

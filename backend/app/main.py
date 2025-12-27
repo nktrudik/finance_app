@@ -1,14 +1,12 @@
 """
 Financial RAG API - главный файл приложения.
 """
-
+import shutil, logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException, Depends, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from pathlib import Path
-import shutil
-
 from app import config
 from app.schemas import (
     QueryRequest, 
@@ -22,7 +20,7 @@ from app.schemas import (
 from app.core.database import engine, Base, get_db
 from app.core.models import User
 from app.core.security import hash_password, verify_password, create_access_token
-
+from app.core.logging_config import setup_logging
 
 # ============= ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =============
 
@@ -30,6 +28,11 @@ from app.core.security import hash_password, verify_password, create_access_toke
 vector_service = None
 llm_service = None
 qa_chain = None
+
+
+# ===== НАСТРОЙКА ЛОГИРОВАНИЯ =====
+setup_logging()
+logger = logging.getLogger(__name__)
 
 
 # ============= LIFESPAN EVENT =============
@@ -43,11 +46,11 @@ async def lifespan(app: FastAPI):
     Код ПОСЛЕ yield - выполняется при остановке (shutdown).
     """
     # ===== STARTUP =====
-    print("🚀 Financial RAG API запускается...")
+    logger.info("Financial RAG API запускается...")
     
     # Создание таблиц в БД
     Base.metadata.create_all(bind=engine)
-    print(f"💾 База данных: {config.DATABASE_URL}")
+    logger.info(f"База данных: {config.DATABASE_URL}")
     
     # TODO: Инициализация RAG сервисов (после их создания)
     # global vector_service, llm_service
@@ -60,13 +63,13 @@ async def lifespan(app: FastAPI):
     # llm_service = LLMService()
     # print("✅ LLM готов")
     
-    print(f"📝 Документация: http://{config.API_HOST}:{config.API_PORT}/docs")
-    print("✅ API готов к работе!")
+    logger.info(f"Документация: http://{config.API_HOST}:{config.API_PORT}/docs")
+    logger.info("API готов к работе!")
     
     yield  # Приложение работает
     
     # ===== SHUTDOWN =====
-    print("🛑 Остановка приложения...")
+    logger.info("Остановка приложения...")
     
     # TODO: Очистка ресурсов (если нужно)
     # if vector_service:
@@ -74,7 +77,7 @@ async def lifespan(app: FastAPI):
     # if llm_service:
     #     print("🧹 Выгрузка LLM...")
     
-    print("👋 Приложение остановлено")
+    logger.info("Приложение остановлено")
 
 
 # ============= СОЗДАНИЕ ПРИЛОЖЕНИЯ =============
@@ -83,7 +86,7 @@ app = FastAPI(
     title="Financial RAG API",
     description="AI-powered personal finance assistant with RAG",
     version="1.0.0",
-    lifespan=lifespan  # ✅ Используем lifespan вместо on_event
+    lifespan=lifespan 
 )
 
 
@@ -103,6 +106,7 @@ app.add_middleware(
 @app.get("/", tags=["Health"])
 async def root():
     """Проверка что API работает"""
+    logger.debug("GET / вызван, используемая ручка: root, tags={['Health']}")
     return {
         "message": "Financial RAG API",
         "status": "healthy",
@@ -114,6 +118,7 @@ async def root():
 @app.get("/health", tags=["Health"])
 async def health():
     """Проверка состояния всех сервисов"""
+    logger.debug("Health check вызван")
     return {
         "status": "ok",
         "services": {
@@ -130,9 +135,11 @@ async def health():
 @app.post("/api/v1/auth/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED, tags=["Authentication"])
 async def register(user_data: UserRegister, db: Session = Depends(get_db)):
     """Регистрация нового пользователя"""
+    logger.info("🔄 Попытка регистрации: %s", user_data.username)
     
     # Проверка email
     if db.query(User).filter(User.email == user_data.email).first():
+        logger.warning("⚠️ Email уже зарегистрирован: %s", user_data.email)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email уже зарегистрирован"
@@ -140,6 +147,7 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
     
     # Проверка username
     if db.query(User).filter(User.username == user_data.username).first():
+        logger.warning("⚠️ Username уже занят: %s", user_data.username)
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Username уже занят"
@@ -156,7 +164,7 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     
-    print(f"✅ Пользователь зарегистрирован: {new_user.username}")
+    logger.info(f"Пользователь зарегистрирован: {new_user.username}")
     
     return new_user
 
@@ -164,18 +172,20 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
 @app.post("/api/v1/auth/login", response_model=Token, tags=["Authentication"])
 async def login(credentials: UserLogin, db: Session = Depends(get_db)):
     """Вход пользователя"""
-    
+    logger.info("🔄 Попытка входа: %s", credentials.username)
+
     user = db.query(User).filter(User.username == credentials.username).first()
     
     if not user or not verify_password(credentials.password, user.hashed_password):
+        logger.warning("⚠️ Неудачная попытка входа: %s", credentials.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Неверный username или пароль"
+            detail="Неверный email или пароль"
         )
     
     access_token = create_access_token(data={"sub": str(user.id)})
     
-    print(f"✅ Пользователь вошёл: {user.username}")
+    logger.info(f"Пользователь вошёл: {user.username}")
     
     return Token(access_token=access_token)
 
@@ -185,9 +195,12 @@ async def login(credentials: UserLogin, db: Session = Depends(get_db)):
 @app.post("/api/v1/upload", response_model=UploadResponse, tags=["RAG"])
 async def upload_csv(file: UploadFile = File(...)):
     """Загрузка CSV с транзакциями"""
+    logger.info("📄 Загрузка CSV: %s", file.filename)
+
     global qa_chain
     
     if not file.filename.endswith('.csv'):
+        logger.warning("⚠️ Неверный формат файла: %s", file.filename)
         raise HTTPException(status_code=400, detail="Нужен CSV файл")
     
     temp_dir = Path("./temp")
@@ -198,7 +211,7 @@ async def upload_csv(file: UploadFile = File(...)):
         with open(temp_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
         
-        print(f"📄 CSV загружен: {file.filename}")
+        logger.info(f"CSV загружен: {file.filename}")
         
         # TODO: После создания сервисов
         # from app.services.csv_parser import CSVParser
@@ -214,26 +227,30 @@ async def upload_csv(file: UploadFile = File(...)):
         )
     
     except Exception as e:
-        print(f"❌ Ошибка: {e}")
+        logger.error("Ошибка при обработке CSV: %s", str(e), exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
     
     finally:
         if temp_path.exists():
             temp_path.unlink()
+            logger.debug("Временный файл удалён: %s", temp_path)
+
 
 
 @app.post("/api/v1/query", response_model=QueryResponse, tags=["RAG"])
 async def query(request: QueryRequest):
     """Задать вопрос финансовому ассистенту"""
+    logger.info("Вопрос: %s", request.question)
     
     if qa_chain is None:
+        logger.warning("Попытка запроса без загруженных данных")
         raise HTTPException(
             status_code=400,
             detail="Сначала загрузите CSV через /api/v1/upload"
         )
     
     try:
-        print(f"❓ Вопрос: {request.question}")
+        logger.info("Ответ сгенерирован")
         
         # TODO: После создания LLMService
         # result = llm_service.answer(qa_chain, request.question)
@@ -250,5 +267,5 @@ async def query(request: QueryRequest):
         )
     
     except Exception as e:
-        print(f"❌ Ошибка: {e}")
+        logger.error("Ошибка при обработке запроса: %s", str(e), exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
