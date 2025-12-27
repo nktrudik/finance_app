@@ -1,13 +1,11 @@
 """
 Функции безопасности: хеширование паролей, создание JWT токенов.
 """
-
+from app import config
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 from passlib.context import CryptContext
 from jose import JWTError, jwt
-
-from app import config
 
 # Контекст для хеширования паролей
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")

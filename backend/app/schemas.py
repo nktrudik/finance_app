@@ -66,7 +66,7 @@ class UserLogin(BaseModel):
     Что iOS отправляет при логине:
     POST /api/v1/auth/login
     {
-        "username": "testuser",
+        "email": "testuser",
         "password": "password123"
     }
     """
