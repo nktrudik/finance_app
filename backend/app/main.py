@@ -10,10 +10,6 @@ from pathlib import Path
 import shutil
 
 from app import config
-<<<<<<< HEAD
-from app.schemas import QueryRequest, UploadResponse
-
-=======
 from app.schemas import (
     QueryRequest, 
     QueryResponse, 
@@ -26,7 +22,6 @@ from app.schemas import (
 from app.core.database import engine, Base, get_db
 from app.core.models import User
 from app.core.security import hash_password, verify_password, create_access_token
->>>>>>> 54a9a34765b4c3ab3aa75cc2f1724097fa0e2883
 
 
 # ============= ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =============
