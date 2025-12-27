@@ -10,8 +10,8 @@ load_dotenv()
 
 # Корневая директория проекта и базовые настройки
 BASE_DIR = Path(__file__).parent.parent  # backend/
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
-ENVIRONMENT = os.getenv("ENVIRONMENT")
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 
 
 # ============= DATA =============
@@ -23,14 +23,14 @@ QDRANT_COLLECTION_NAME = "financial_transactions"
 
 
 # ============= БЕЗОПАСНОСТЬ =============
-ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 ALGORITHM = os.getenv("ALGORITHM")
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 # ============= API =============
 API_HOST = os.getenv("API_HOST")
-API_PORT = os.getenv("API_PORT")
+API_PORT = int(os.getenv("API_PORT"))
 
 # ============= LLM НАСТРОЙКИ =============
 LLM_MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"

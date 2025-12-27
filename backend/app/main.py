@@ -174,7 +174,7 @@ async def login(credentials: UserLogin, db: Session = Depends(get_db)):
     """Вход пользователя"""
     logger.info("🔄 Попытка входа: %s", credentials.username)
 
-    user = db.query(User).filter(User.email == credentials.email).first()
+    user = db.query(User).filter(User.username == credentials.username).first()
     
     if not user or not verify_password(credentials.password, user.hashed_password):
         logger.warning("⚠️ Неудачная попытка входа: %s", credentials.username)
