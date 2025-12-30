@@ -1,0 +1,36 @@
+2025-12-27 23:25:13 | INFO     | app.main:lifespan:49 - Financial RAG API запускается...
+2025-12-27 23:25:13 | INFO     | app.main:lifespan:53 - База данных: sqlite:////Users/kirill/finance_app/backend/data/app.db
+2025-12-27 23:25:13 | INFO     | app.main:lifespan:66 - Документация: http://0.0.0.0:8000/docs
+2025-12-27 23:25:13 | INFO     | app.main:lifespan:67 - API готов к работе!
+2025-12-27 23:25:21 | DEBUG    | app.main:root:109 - GET / вызван, используемая ручка: root, tags={['Health']}
+2025-12-27 23:25:27 | DEBUG    | app.main:root:109 - GET / вызван, используемая ручка: root, tags={['Health']}
+2025-12-27 23:27:04 | INFO     | app.main:lifespan:72 - Остановка приложения...
+2025-12-27 23:27:04 | INFO     | app.main:lifespan:80 - Приложение остановлено
+2025-12-27 23:28:02 | INFO     | app.main:lifespan:49 - Financial RAG API запускается...
+2025-12-27 23:28:02 | INFO     | app.main:lifespan:53 - База данных: sqlite:////Users/kirill/finance_app/backend/data/app.db
+2025-12-27 23:28:02 | INFO     | app.main:lifespan:66 - Документация: http://0.0.0.0:8000/docs
+2025-12-27 23:28:02 | INFO     | app.main:lifespan:67 - API готов к работе!
+2025-12-27 23:28:47 | DEBUG    | app.main:root:109 - GET / вызван, используемая ручка: root, tags={['Health']}
+2025-12-27 23:30:06 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: Kirill
+2025-12-27 23:30:06 | DEBUG    | passlib.handlers.argon2:_load_backend_mixin:715 - detected 'argon2_cffi' backend, version '23.1.0', with support for 0x13 argon2 hashes
+2025-12-27 23:30:06 | INFO     | app.main:register:167 - Пользователь зарегистрирован: Kirill
+2025-12-27 23:30:14 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: Kirill
+2025-12-27 23:30:14 | WARNING  | app.main:register:142 - ⚠️ Email уже зарегистрирован: phonky@mail.ru
+2025-12-27 23:30:48 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: Nikitoskokos
+2025-12-27 23:30:48 | INFO     | app.main:register:167 - Пользователь зарегистрирован: Nikitoskokos
+2025-12-27 23:39:42 | INFO     | app.main:login:175 - 🔄 Попытка входа: Nikitoskokos
+2025-12-27 23:39:42 | INFO     | app.main:login:188 - Пользователь вошёл: Nikitoskokos
+2025-12-27 23:41:46 | INFO     | app.main:login:175 - 🔄 Попытка входа: Nikitoskokos
+2025-12-27 23:41:46 | INFO     | app.main:login:188 - Пользователь вошёл: Nikitoskokos
+2025-12-30 13:11:15 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: phonky
+2025-12-30 13:11:15 | WARNING  | app.main:register:150 - ⚠️ Username уже занят: phonky
+2025-12-30 13:11:16 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: phonky
+2025-12-30 13:11:16 | WARNING  | app.main:register:150 - ⚠️ Username уже занят: phonky
+2025-12-30 13:11:37 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: phonkich
+2025-12-30 13:11:37 | INFO     | app.main:register:167 - Пользователь зарегистрирован: phonkich
+2025-12-30 13:47:39 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: phonkiii
+2025-12-30 13:47:39 | INFO     | app.main:register:167 - Пользователь зарегистрирован: phonkiii
+2025-12-30 13:50:52 | INFO     | app.main:register:138 - 🔄 Попытка регистрации: oofgdgojq0r
+2025-12-30 13:50:52 | INFO     | app.main:register:167 - Пользователь зарегистрирован: oofgdgojq0r
+2025-12-30 13:52:16 | INFO     | app.main:login:175 - 🔄 Попытка входа: Nikitoskokos
+2025-12-30 13:52:16 | INFO     | app.main:login:188 - Пользователь вошёл: Nikitoskokos
