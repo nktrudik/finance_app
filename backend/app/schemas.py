@@ -2,9 +2,18 @@
 Pydantic модели для query endpoint.
 """
 from pydantic import BaseModel, Field, EmailStr
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Any
 from datetime import datetime
 
+class UploadStatistics(BaseModel):
+    """Статистика загрузки"""
+    processed_from_csv: int
+    before_upload: int
+    after_upload: int
+    added_new: int
+    updated_duplicates: int
+    deleted: int
+    mode: str 
 
 class QueryRequest(BaseModel):
     """Запрос от пользователя"""
@@ -38,8 +47,10 @@ class UploadResponse(BaseModel):
     """Ответ после загрузки CSV"""
     status: str
     message: str
-    documents_processed: int
-    date_range: Optional[Dict[str, str]] = None  # {"from": "2024-01-01", "to": "2024-12-31"}
+    user: Dict[str, Any]
+    file: Dict[str, Any]
+    statistics: UploadStatistics
+    next_steps: Dict[str, str]
 
 
 class UserRegister(BaseModel):
@@ -59,7 +70,7 @@ class UserRegister(BaseModel):
     password: str = Field(..., min_length=8, max_length=100, description="Пароль (минимум 8 символов)")
 
 
-class UserLogin(BaseModel):
+# class UserLogin(BaseModel):
     """
     Схема для входа пользователя.
     
@@ -70,8 +81,8 @@ class UserLogin(BaseModel):
         "password": "password123"
     }
     """
-    username: str = Field(..., description="Имя пользователя")
-    password: str = Field(..., description="Пароль")
+    # username: str = Field(..., description="Имя пользователя")
+    # password: str = Field(..., description="Пароль")
 
 
 class UserResponse(BaseModel):

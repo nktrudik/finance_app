@@ -1,47 +1,46 @@
-# backend/.gitignore
+# ============================================================================
+# FINANCE APP RAG - Git Ignore
+# ============================================================================
 
-# ===== Переменные окружения (НЕ загружать в Git!) =====
+# ===== ОКРУЖЕНИЕ (СЕКРЕТЫ!) =====
 .env
-.env.*
+.env.local
+.env.*.local
 
-# ===== База данных =====
-data/
+# ===== БАЗА ДАННЫХ =====
+backend/data/              # ← Указываем путь от КОРНЯ!
 *.db
 *.sqlite
 *.sqlite3
 
-# ===== Логи =====
-logs/
+# ===== ЛОГИ =====
+backend/logs/              # ← Указываем путь от КОРНЯ!
 *.log
 
-# ===== Qdrant =====
-qdrant_storage/
+# ===== МОДЕЛИ (HuggingFace кэш) =====
+backend/models/            # ← Указываем путь от КОРНЯ!
+*.onnx
+*.bin
+*.pt
+*.pth
+*.pkl                      # ← Добавь .pkl (кэш embeddings)
 
-# ===== Python =====
+# ===== QDRANT STORAGE =====
+backend/data/qdrant/
+
+# ===== PYTHON =====
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
+dist/
+build/
 
-# ===== Виртуальное окружение =====
-.venv/
+# ===== ВИРТУАЛЬНОЕ ОКРУЖЕНИЕ =====
 venv/
+.venv/
 ENV/
 env/
 
@@ -49,10 +48,12 @@ env/
 .vscode/
 .idea/
 *.swp
-*.swo
-*~
 
-# ===== Временные файлы =====
+# ===== ВРЕМЕННЫЕ ФАЙЛЫ =====
 temp/
 tmp/
 *.tmp
+.DS_Store
+Thumbs.db
+backend/models/*
+backend/models/**/*

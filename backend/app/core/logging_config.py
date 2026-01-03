@@ -1,12 +1,7 @@
-"""
-Конфигурация логирования для FastAPI приложения.
-"""
-
 import logging
-import sys              # ← Нужна для вывода в stdout (консоль)
-from pathlib import Path # ← Работа с путями к файлам
+import sys
 
-from app import config
+from app.config import LOG_LEVEL, LOGS_DIR
 
 
 def setup_logging():
@@ -15,10 +10,8 @@ def setup_logging():
     
     - В development: DEBUG уровень, цветной вывод в консоль
     - В production: INFO уровень, логи в файл
-    """
-
-    log_dir = config.BASE_DIR / "logs"
-    log_dir.mkdir(exist_ok=True)
+    """    
+    log_dir = LOGS_DIR
 
     # Формат логов
     log_format = "%(asctime)s | %(levelname)-8s | %(name)s:%(funcName)s:%(lineno)d - %(message)s"
@@ -26,7 +19,7 @@ def setup_logging():
 
     # Корневой логгер
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
+    root_logger.setLevel(LOG_LEVEL)
 
     # Очищаем старые хэндлеры (если есть)
     root_logger.handlers.clear()

@@ -6,11 +6,18 @@ from datetime import datetime, timedelta
 from typing import Optional
 from passlib.context import CryptContext
 from jose import JWTError, jwt
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
+from sqlalchemy.orm import Session
 
+from app.core.database import get_db
+from app.core.models import User
+from app.config import SECRET_KEY, ALGORITHM
 from app import config
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 def hash_password(password: str) -> str:
     """Хеширует пароль с argon2"""
@@ -44,3 +51,46 @@ def decode_access_token(token: str) -> Optional[dict]:
         return payload
     except JWTError:
         return None
+
+
+def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+) -> User:
+    """
+    Извлекает текущего пользователя из JWT токена.
+    
+    Args:
+        token: JWT токен из заголовка Authorization
+        db: Сессия базы данных
+        
+    Returns:
+        User: Объект пользователя
+        
+    Raises:
+        HTTPException 401: Если токен невалиден или пользователь не найден
+    """
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
+    try:
+        # Декодируем JWT токен
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id: int = payload.get("sub")  # sub = subject (ID пользователя)
+        
+        if user_id is None:
+            raise credentials_exception
+            
+    except JWTError:
+        raise credentials_exception
+    
+    # Загружаем пользователя из БД
+    user = db.query(User).filter(User.id == user_id).first()
+    
+    if user is None:
+        raise credentials_exception
+    
+    return user
