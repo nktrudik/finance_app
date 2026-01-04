@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# 3. Системные зависимости (для проверки состояния контейнера) (опциаонально)
+# 3. Системные зависимости (для проверки состояния контейнера)
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -18,9 +18,10 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 # Копируем код приложения
 COPY ./app ./app
+COPY manage.py .
 
-# Создаём директорию для данных (опциаонально)
-RUN mkdir -p /app/data
+# Создаём необходимые директории
+RUN mkdir -p /app/data /app/logs /app/models /app/temp
 
 # Открываем порт
 EXPOSE 8000

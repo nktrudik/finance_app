@@ -1,0 +1,65 @@
+
+services:
+  # =========================================================================
+  # BACKEND: FastAPI приложение (API + embedding + indexing + всё остальное)
+  # =========================================================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: finance_backend
+  
+    ports:
+      - "8000:8000"
+    
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - SECRET_KEY=XoTOD9ZM4wrDg57-yrTJ06meUSZErw9-Pc67ZDNk2Jo
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=10080
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - QDRANT_URL=http://qdrant:6333
+    
+    volumes:
+      - ./backend/data:/app/data                 # База данных SQLite
+      - ./backend/logs:/app/logs                 # Логи
+      - ./backend/models:/app/models             # Кэш моделей HuggingFace
+      - ./backend/temp:/app/temp                 # Временные файлы
+        
+    networks:
+      - finance_network
+    
+    restart: unless-stopped
+  
+  # =========================================================================
+  # QDRANT: Vector Database
+  # =========================================================================
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: finance_qdrant
+    
+    # Порты
+    ports:
+      - "6333:6333"                              # HTTP API
+      - "6334:6334"                              # gRPC (опционально)
+    
+    # Volumes (данные Qdrant сохраняются)
+    volumes:
+      - ./backend/data/qdrant:/qdrant/storage
+    
+    # Сеть
+    networks:
+      - finance_network
+    
+    # Перезапуск
+    restart: unless-stopped
+
+
+# ===========================================================================
+# NETWORKS: Виртуальная сеть для общения контейнеров
+# ===========================================================================
+networks:
+  finance_network:
+    driver: bridge

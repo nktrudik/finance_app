@@ -8,22 +8,22 @@
 .env.*.local
 
 # ===== БАЗА ДАННЫХ =====
-backend/data/              # ← Указываем путь от КОРНЯ!
+backend/data/
 *.db
 *.sqlite
 *.sqlite3
 
 # ===== ЛОГИ =====
-backend/logs/              # ← Указываем путь от КОРНЯ!
+backend/logs/
 *.log
 
 # ===== МОДЕЛИ (HuggingFace кэш) =====
-backend/models/            # ← Указываем путь от КОРНЯ!
+backend/models/
 *.onnx
 *.bin
 *.pt
 *.pth
-*.pkl                      # ← Добавь .pkl (кэш embeddings)
+*.pkl    
 
 # ===== QDRANT STORAGE =====
 backend/data/qdrant/
