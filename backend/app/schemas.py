@@ -1,28 +1,33 @@
 """
 Pydantic модели для query endpoint.
 """
-from pydantic import BaseModel, Field, EmailStr
-from typing import List, Optional, Dict, Any
+
 from datetime import datetime
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, EmailStr, Field
+
 
 class UploadStatistics(BaseModel):
     """Статистика загрузки"""
+
     processed_from_csv: int
     before_upload: int
     after_upload: int
     added_new: int
     updated_duplicates: int
     deleted: int
-    mode: str 
+    mode: str
+
 
 class QueryRequest(BaseModel):
     """Запрос от пользователя"""
-    question: str = Field(
-        ..., 
-        min_length=3, 
+
+    query: str = Field(
+        ...,
+        min_length=3,
         max_length=500,
         description="Вопрос о финансах",
-        examples=["Сколько я тратил за последнюю неделю на кафешки?"]
+        examples=["Сколько я тратил за последний месяц на супермаркеты?"],
     )
 
 
@@ -32,19 +37,20 @@ class SourceDocument(BaseModel):
     amount: float
     category: str
     description: str
-    merchant: Optional[str] = None
+    score: Optional[float] = None 
 
 
 class QueryResponse(BaseModel):
     """Ответ на вопрос пользователя"""
-    question: str
+    query: str
     answer: str
-    sources: List[SourceDocument]
-    processing_time: Optional[float] = None
+    sources: List[SourceDocument] = []
+    found_count: int = 0
 
 
 class UploadResponse(BaseModel):
     """Ответ после загрузки CSV"""
+
     status: str
     message: str
     user: Dict[str, Any]
@@ -56,7 +62,7 @@ class UploadResponse(BaseModel):
 class UserRegister(BaseModel):
     """
     Схема для регистрации пользователя.
-    
+
     Что iOS отправляет при регистрации:
     POST /api/v1/auth/register
     {
@@ -65,12 +71,14 @@ class UserRegister(BaseModel):
         "password": "password123"
     }
     """
+
     email: EmailStr = Field(..., description="Email пользователя")
     username: str = Field(..., min_length=3, max_length=50, description="Имя пользователя")
-    password: str = Field(..., min_length=8, max_length=100, description="Пароль (минимум 8 символов)")
+    password: str = Field(
+        ..., min_length=8, max_length=100, description="Пароль (минимум 8 символов)"
+    )
 
-
-# class UserLogin(BaseModel):
+    # class UserLogin(BaseModel):
     """
     Схема для входа пользователя.
     
@@ -88,7 +96,7 @@ class UserRegister(BaseModel):
 class UserResponse(BaseModel):
     """
     Схема ответа с данными пользователя.
-    
+
     Что backend возвращает iOS после регистрации:
     {
         "id": 1,
@@ -96,14 +104,13 @@ class UserResponse(BaseModel):
         "username": "testuser",
         "created_at": "2025-12-27T13:45:00"
     }
-    
-    ⚠️ ВАЖНО: НЕ возвращаем пароль! (даже хешированный)
     """
+
     id: int
     email: str
     username: str
     created_at: datetime
-    
+
     class Config:
         from_attributes = True  # Позволяет создавать из SQLAlchemy объекта User
 
@@ -111,15 +118,16 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     """
     Схема JWT токена.
-    
+
     Что backend возвращает iOS после успешного логина:
     {
         "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
         "token_type": "bearer"
     }
-    
+
     iOS сохраняет этот токен и отправляет в заголовках:
     Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
     """
+
     access_token: str = Field(..., description="JWT токен")
     token_type: str = Field(default="bearer", description="Тип токена (всегда bearer)")

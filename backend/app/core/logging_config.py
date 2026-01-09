@@ -7,10 +7,10 @@ from app.config import LOG_LEVEL, LOGS_DIR
 def setup_logging():
     """
     Настройка логирования для приложения.
-    
+
     - В development: DEBUG уровень, цветной вывод в консоль
     - В production: INFO уровень, логи в файл
-    """    
+    """
     log_dir = LOGS_DIR
 
     # Формат логов
@@ -32,22 +32,14 @@ def setup_logging():
     root_logger.addHandler(console_handler)
 
     # ===== FILE HANDLER (все логи) =====
-    file_handler = logging.FileHandler(
-        log_dir / "app.log",
-        mode="a",
-        encoding="utf-8"
-    )
+    file_handler = logging.FileHandler(log_dir / "app.log", mode="a", encoding="utf-8")
     file_handler.setLevel(logging.DEBUG)
     file_formatter = logging.Formatter(log_format, datefmt=date_format)
     file_handler.setFormatter(file_formatter)
     root_logger.addHandler(file_handler)
 
     # ===== ERROR FILE HANDLER (только ошибки) =====
-    error_handler = logging.FileHandler(
-        log_dir / "errors.log",
-        mode="a",
-        encoding="utf-8"
-    )
+    error_handler = logging.FileHandler(log_dir / "errors.log", mode="a", encoding="utf-8")
     error_handler.setLevel(logging.ERROR)
     error_formatter = logging.Formatter(log_format, datefmt=date_format)
     error_handler.setFormatter(error_formatter)

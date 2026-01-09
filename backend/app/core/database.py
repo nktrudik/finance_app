@@ -5,11 +5,7 @@ from sqlalchemy.orm import sessionmaker
 from app.config import DATABASE_URL
 
 # Создаём движок БД
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False},
-    echo=False
-)
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False}, echo=False)
 
 # Сессия для работы с БД
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -21,7 +17,7 @@ Base = declarative_base()
 def get_db():
     """
     Dependency для FastAPI - предоставляет сессию БД.
-    
+
     Использование в routes:
     @app.get("/users")
     async def get_users(db: Session = Depends(get_db)):
