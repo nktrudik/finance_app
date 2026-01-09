@@ -12,15 +12,9 @@ services:
     ports:
       - "8000:8000"
     
-    environment:
-      - ENVIRONMENT=development
-      - LOG_LEVEL=DEBUG
-      - SECRET_KEY=XoTOD9ZM4wrDg57-yrTJ06meUSZErw9-Pc67ZDNk2Jo
-      - ALGORITHM=HS256
-      - ACCESS_TOKEN_EXPIRE_MINUTES=10080
-      - API_HOST=0.0.0.0
-      - API_PORT=8000
-      - QDRANT_URL=http://qdrant:6333
+    env_file:
+        - ./backend/.env
+      
     
     volumes:
       - ./backend/data:/app/data                 # База данных SQLite
