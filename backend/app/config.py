@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     # --- ОБЩИЕ НАСТРОЙКИ ---
     ENVIRONMENT: str = "development"
     DEBUG: bool = False    
-    STORAGE_DIR = BASE_DIR / "storage"
+    STORAGE_DIR: Path = BASE_DIR / "storage"
     
     # --- API СЕРВЕР ---
     PORT: int = int(os.environ.get("PORT", os.environ.get("API_PORT", 8000)))
