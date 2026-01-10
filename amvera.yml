@@ -13,5 +13,3 @@ run:
   persistence:
     - mountPath: /data
       name: data
-    - mountPath: /models
-      name: models
