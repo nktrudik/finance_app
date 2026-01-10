@@ -2,15 +2,16 @@ meta:
   environment: python
   toolchain:
     name: pip
-    version: 3.13.7
+    version: 3.12
 
 build:
   requirementsPath: backend/requirements.txt
+  useCache: true
 
 run:
-  command: uvicorn backend.app.main:app --host 0.0.0.0 --port 80
+  command: cd backend && uvicorn app.main:app --host 0.0.0.0 --port 80
   persistence:
-    - mountPath: /app/data
+    - mountPath: /data
       name: data
-    - mountPath: /app/models
+    - mountPath: /models
       name: models
