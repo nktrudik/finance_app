@@ -1,102 +1,61 @@
-# backend/app/config.py
-"""
-Централизованная конфигурация бэкенда приложения.
-
-Все переменные загружаются из .env файла.
-Порядок приоритета:
-1. .env файл (если существует)
-2. Значения по умолчанию в этом файле
-3. Переменные окружения системы
-"""
-
 import os
 from pathlib import Path
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dotenv import load_dotenv
+# Базовый путь проекта
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ============= ИНИЦИАЛИЗАЦИЯ ОКРУЖЕНИЯ =============
-# Загружаем переменные из .env файла
-env_path = Path(__file__).parent.parent / ".env"
-load_dotenv(env_path, override=False)
+class Settings(BaseSettings):
+    # --- ОБЩИЕ НАСТРОЙКИ ---
+    ENVIRONMENT: str = "development"
+    DEBUG: bool = False    
+    STORAGE_DIR = BASE_DIR / "storage"
+    
+    # --- API СЕРВЕР ---
+    PORT: int = int(os.environ.get("PORT", os.environ.get("API_PORT", 8000)))
+    API_HOST: str = "0.0.0.0"
+    
+    # --- БЕЗОПАСНОСТЬ ---
+    SECRET_KEY: str
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080
 
-# ============= БАЗОВЫЕ ПУТИ =============
-# Корневая директория: backend/
-BASE_DIR = Path(__file__).parent.parent
+    # --- ХРАНИЛИЩЕ (Пути для Volumes) ---
+    # В продакшене (Railway) пути должны быть абсолютными к монтированным дискам
+    DATA_DIR: Path = STORAGE_DIR / "data"
+    MODELS_DIR: Path = STORAGE_DIR / "models"
+    LOGS_DIR: Path = STORAGE_DIR / "logs"
+    TEMP_DIR: Path = BASE_DIR / "temp"
 
-# Директория для данных (БД, Qdrant, etc.)
-DATA_DIR = BASE_DIR / "data"
+    # --- БАЗЫ ДАННЫХ ---
+    # Если в Railway создана переменная DATABASE_URL (например для Postgres), 
+    # используем её. Иначе — локальный SQLite.
+    DATABASE_URL: str = f"sqlite:///{BASE_DIR}/data/app.db"
+    
+    QDRANT_URL: str = "http://localhost:6333"
+    QDRANT_COLLECTION_NAME: str = "financial_transactions"
 
-# Директория для моделей (HuggingFace embeddings)
-MODELS_DIR = BASE_DIR / "models"
+    # --- LLM И МОДЕЛИ ---
+    API_KEY: str
+    BASE_URL: str = "https://openrouter.ai/api/v1"
+    LLM_MODEL_NAME: str = "nex-agi/deepseek-v3.1-nex-n1:free"
+    
+    DENSE_MODEL_NAME: str = "BAAI/bge-large-en-v1.5"
+    SPARSE_MODEL_NAME: str = "Qdrant/bm25"
 
-# Директория для логов
-LOGS_DIR = BASE_DIR / "logs"
-
-# Директория для временных файлов (uploads, etc.)
-TEMP_DIR = BASE_DIR / "temp"
-
-# Автоматически создаём все необходимые директории
-for directory in [DATA_DIR, MODELS_DIR, LOGS_DIR, TEMP_DIR]:
-    directory.mkdir(parents=True, exist_ok=True)
-
-# ============= ОКРУЖЕНИЕ =============
-ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
-IS_PRODUCTION = ENVIRONMENT == "production"
-IS_DEVELOPMENT = ENVIRONMENT == "development"
-
-# ============= ЛОГИРОВАНИЕ =============
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
-LOG_FILE = LOGS_DIR / "app.log"
-
-# ============= DATABASE (SQLite) =============
-DATABASE_URL = f"sqlite:///{DATA_DIR / 'app.db'}"
-
-# ============= QDRANT VECTOR DATABASE =============
-QDRANT_URL = os.getenv("QDRANT_URL", "http://qdrant:6333")
-QDRANT_COLLECTION_NAME = "financial_transactions"
-
-# ============= EMBEDDINGS =============
-EMBEDDING_CACHE_DIR = str(MODELS_DIR / "embeddings")
-BATCH_SIZE = 32
-
-# ============= MODELS =============
-DENSE_MODEL_NAME = "BAAI/bge-large-en-v1.5"
-SPARSE_MODEL_NAME = "Qdrant/bm25"
-
-# ============= БЕЗОПАСНОСТЬ (JWT) =============
-SECRET_KEY = os.getenv(
-    "SECRET_KEY", "your-secret-key-change-in-production-use-python-secrets-to-generate"
-)
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "10080"))
-
-
-# ============= API =============
-API_HOST = os.getenv("API_HOST", "0.0.0.0")
-API_PORT = int(os.getenv("API_PORT", "8000"))
-
-# ============= LLM  =============
-API_KEY = os.getenv("API_KEY")
-BASE_URL = os.getenv("BASE_URL")
-LLM_MODEL_NAME = "nex-agi/deepseek-v3.1-nex-n1:free"
-
-
-# ============= DEBUG INFO =============
-if IS_DEVELOPMENT:
-    # Вывести конфиг при запуске в development режиме (без secrets)
-    print(
-        f"""
-    ╔════════════════════════════════════════╗
-    ║   FINANCE APP RAG - Конфигурация       ║
-    ╚════════════════════════════════════════╝
-    Environment: {ENVIRONMENT}
-    Database: {DATABASE_URL}
-    Qdrant: {QDRANT_URL}
-    Data Dir: {DATA_DIR}
-    Models Dir: {MODELS_DIR}
-    Logs Dir: {LOGS_DIR}
-    """
+    # Автоматическая загрузка из .env (только для локальной разработки)
+    model_config = SettingsConfigDict(
+        env_file=BASE_DIR / ".env", 
+        env_file_encoding='utf-8',
+        extra='ignore' # Игнорировать лишние переменные
     )
+
+# Создаем объект конфига
+config = Settings()
+
+# Гарантируем наличие папок
+for d in [config.STORAGE_DIR, config.DATA_DIR, config.MODELS_DIR, config.LOGS_DIR, config.TEMP_DIR]:
+    d.mkdir(parents=True, exist_ok=True)
 
 # ========== RAG SYSTEM PROMPT ==========
 SYSTEM_PROMPT = """

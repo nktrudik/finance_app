@@ -10,16 +10,14 @@
 # ===== БАЗА ДАННЫХ =====
 backend/data/
 *.db
-*.sqlite
-*.sqlite3
 
 # ===== ЛОГИ =====
 backend/logs/
 *.log
 
 # ===== МОДЕЛИ (HuggingFace кэш) =====
-backend/models/
-*.onnx
+backend/models/*
+backend/models/**/*
 *.bin
 *.pt
 *.pth
@@ -30,30 +28,10 @@ backend/data/qdrant/
 
 # ===== PYTHON =====
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-*.egg-info/
-dist/
-build/
+
 
 # ===== ВИРТУАЛЬНОЕ ОКРУЖЕНИЕ =====
 venv/
-.venv/
-ENV/
-env/
-
-# ===== IDE =====
-.vscode/
-.idea/
-*.swp
 
 # ===== ВРЕМЕННЫЕ ФАЙЛЫ =====
 temp/
-tmp/
-*.tmp
-.DS_Store
-Thumbs.db
-backend/models/*
-backend/models/**/*
