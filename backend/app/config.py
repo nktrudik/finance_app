@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     API_KEY: str
     BASE_URL: str = "https://openrouter.ai/api/v1"
     LLM_MODEL_NAME: str = "nex-agi/deepseek-v3.1-nex-n1:free"
+    BATCH_SIZE: int = 50
     
     DENSE_MODEL_NAME: str = "BAAI/bge-large-en-v1.5"
     SPARSE_MODEL_NAME: str = "Qdrant/bm25"
