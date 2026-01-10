@@ -1,6 +1,8 @@
 """
 Financial RAG API - главный файл приложения.
 """
+import os
+print(f"!!! DEBUG: ПРОЦЕСС СТАРТАНУЛ. PORT={os.environ.get('PORT')}", flush=True)
 import logging
 from contextlib import asynccontextmanager
 
