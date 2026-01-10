@@ -2,7 +2,7 @@ import logging
 
 from openai import AsyncOpenAI
 
-from app.config import API_KEY, BASE_URL, LLM_MODEL_NAME
+from app.config import config
 
 logger = logging.getLogger(__name__)
 
@@ -14,12 +14,12 @@ class LLMService:
     """
 
     def __init__(self):
-        api_key = API_KEY
+        api_key = config.API_KEY
         if not api_key:
             raise ValueError("API_KEY не найден!")
 
         self.client = AsyncOpenAI(
-            base_url=BASE_URL,
+            base_url=config.BASE_URL,
             api_key=api_key,
             default_headers={
                 "HTTP-Referer": "https://github.com/nktrudik/finance_app",
@@ -27,7 +27,7 @@ class LLMService:
             },
         )
 
-    async def generate(self, messages, model=LLM_MODEL_NAME):
+    async def generate(self, messages, model=config.LLM_MODEL_NAME):
         """
         Docstring для generate
 

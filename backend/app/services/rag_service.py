@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 from qdrant_client import QdrantClient
 from qdrant_client.models import FieldCondition, Filter, MatchValue, NamedSparseVector, NamedVector
 
-from app.config import DENSE_MODEL_NAME, QDRANT_COLLECTION_NAME, SPARSE_MODEL_NAME, SYSTEM_PROMPT
+from app.config import config, SYSTEM_PROMPT
 from app.services.embedding_service import EmbeddingService
 from app.services.llm_service import LLMService
 
@@ -18,8 +18,8 @@ class RAGService:
         self.qdrant = qdrant
         self.embedder = embedder
         self.llm = llm
-        self.sparse_model = SPARSE_MODEL_NAME
-        self.dense_model = DENSE_MODEL_NAME
+        self.sparse_model = config.SPARSE_MODEL_NAME
+        self.dense_model = config.DENSE_MODEL_NAME
 
     async def ask(self, query: str, user_id: int, limit: int = None) -> Dict[str, Any]:
         """
@@ -73,7 +73,7 @@ class RAGService:
         # DENSE ПОИСК
         try:
             dense_results = self.qdrant.search(
-                collection_name=QDRANT_COLLECTION_NAME,
+                collection_name=config.QDRANT_COLLECTION_NAME,
                 query_vector=NamedVector(
                     name="dense",
                     vector=dense_vector,
@@ -93,7 +93,7 @@ class RAGService:
         # SPARSE ПОИСК
         try:
             sparse_results = self.qdrant.search(
-                collection_name=QDRANT_COLLECTION_NAME,
+                collection_name=config.QDRANT_COLLECTION_NAME,
                 query_vector=NamedSparseVector(
                     name="sparse",
                     vector=sparse_vector,

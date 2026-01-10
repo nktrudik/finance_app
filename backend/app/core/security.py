@@ -12,7 +12,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
 from app import config
-from app.config import ALGORITHM, SECRET_KEY
+from app.config import config
 from app.core.database import get_db
 from app.core.models import User
 
@@ -76,7 +76,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
 
     try:
         # Декодируем JWT токен
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
         user_id: int = payload.get("sub")  # sub = subject (ID пользователя)
 
         if user_id is None:

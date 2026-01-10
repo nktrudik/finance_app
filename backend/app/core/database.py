@@ -2,10 +2,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from app.config import DATABASE_URL
+from app.config import config
 
 # Создаём движок БД
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False}, echo=False)
+engine = create_engine(config.DATABASE_URL, connect_args={"check_same_thread": False}, echo=False)
 
 # Сессия для работы с БД
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

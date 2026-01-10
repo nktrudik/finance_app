@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from app.config import LOG_LEVEL, LOGS_DIR
+from app.config import config
 
 
 def setup_logging():
@@ -11,7 +11,7 @@ def setup_logging():
     - В development: DEBUG уровень, цветной вывод в консоль
     - В production: INFO уровень, логи в файл
     """
-    log_dir = LOGS_DIR
+    log_dir = config.LOGS_DIR
 
     # Формат логов
     log_format = "%(asctime)s | %(levelname)-8s | %(name)s:%(funcName)s:%(lineno)d - %(message)s"
@@ -19,7 +19,7 @@ def setup_logging():
 
     # Корневой логгер
     root_logger = logging.getLogger()
-    root_logger.setLevel(LOG_LEVEL)
+    root_logger.setLevel(config.LOG_LEVEL)
 
     # Очищаем старые хэндлеры (если есть)
     root_logger.handlers.clear()

@@ -6,7 +6,7 @@ from typing import Dict, List, Tuple
 from fastembed import SparseTextEmbedding, TextEmbedding
 from tqdm import tqdm
 
-from app.config import BATCH_SIZE, DENSE_MODEL_NAME, MODELS_DIR, SPARSE_MODEL_NAME
+from app.config import config
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class EmbeddingService:
     Класс для создания эмбэддингов
     """
 
-    def __init__(self, cache_dir: str = MODELS_DIR, batch_size: int = BATCH_SIZE):
+    def __init__(self, cache_dir: str = config.MODELS_DIR, batch_size: int = config.BATCH_SIZE):
         """
         Docstring для __init__
 
@@ -28,19 +28,19 @@ class EmbeddingService:
         """
         # Папка уже создана в config.py, здесь только логируем
         logger.info("Инициализация embedding моделей...")
-        logger.info(f"Кэш моделей: {MODELS_DIR}")
+        logger.info(f"Кэш моделей: {config.MODELS_DIR}")
 
         self.cache_dir = cache_dir
         # Dense embeddings
-        self.dense_model = TextEmbedding(model_name=DENSE_MODEL_NAME, cache_dir=self.cache_dir)
-        logger.info(f"Dense model {MODELS_DIR} загружена")
+        self.dense_model = TextEmbedding(model_name=config.DENSE_MODEL_NAME, cache_dir=self.cache_dir)
+        logger.info(f"Dense model {config.MODELS_DIR} загружена")
 
         # Sparse embeddings
         self.sparse_model = SparseTextEmbedding(
-            model_name=SPARSE_MODEL_NAME, cache_dir=self.cache_dir
+            model_name=config.SPARSE_MODEL_NAME, cache_dir=self.cache_dir
         )
 
-        logger.info(f"Sparse model {SPARSE_MODEL_NAME} загружена")
+        logger.info(f"Sparse model {config.SPARSE_MODEL_NAME} загружена")
 
         self.batch_size = batch_size
 

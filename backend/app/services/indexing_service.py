@@ -6,7 +6,7 @@ from datetime import datetime
 
 from qdrant_client import QdrantClient, models
 
-from app.config import BATCH_SIZE, MODELS_DIR, QDRANT_COLLECTION_NAME
+from app.config import config
 from app.services.embedding_service import EmbeddingService
 from app.utils.csv_parser import format_transaction_text, parse_transactions_csv
 
@@ -18,8 +18,8 @@ class IndexingService:
 
     def __init__(self, qdrant_client: QdrantClient):
         self.qdrant = qdrant_client
-        self.embedder = EmbeddingService(cache_dir=MODELS_DIR, batch_size=BATCH_SIZE)
-        self.collection_name = QDRANT_COLLECTION_NAME
+        self.embedder = EmbeddingService(cache_dir=config.MODELS_DIR, batch_size=config.BATCH_SIZE)
+        self.collection_name = config.QDRANT_COLLECTION_NAME
 
     def delete_user_transactions(self, user_id: int) -> bool:
         """

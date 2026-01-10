@@ -2,12 +2,12 @@ import logging
 
 from qdrant_client import QdrantClient, models
 
-from app.config import QDRANT_COLLECTION_NAME, QDRANT_URL
+from app.config import config
 
 logger = logging.getLogger(__name__)
 
 
-def get_qdrant_client(url: str = QDRANT_URL) -> QdrantClient:
+def get_qdrant_client(url: str = config.QDRANT_URL) -> QdrantClient:
     """
     Docstring для get_qdrant_client
 
@@ -31,7 +31,7 @@ def get_qdrant_client(url: str = QDRANT_URL) -> QdrantClient:
         raise ConnectionError(f"Не удалось подключиться к Qdrant ({url}): {e}")
 
 
-def create_collection(client: QdrantClient, collection_name: str = QDRANT_COLLECTION_NAME):
+def create_collection(client: QdrantClient, collection_name: str = config.QDRANT_COLLECTION_NAME):
     """
     Docstring для create_collection
 
