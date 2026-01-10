@@ -18,11 +18,13 @@ python-dotenv==1.0.1
 
 # ===== Data Validation =====
 pydantic==2.10.5    
-email-validator==2.1.0       
+email-validator==2.1.0
+pydantic-settings==2.6.1   
 
 # ===== Vector Database & Embeddings =====
 qdrant-client==1.12.1         
 fastembed==0.4.2            
 openai==1.59.7
+
 
            
