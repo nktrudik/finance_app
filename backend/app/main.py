@@ -57,24 +57,24 @@ async def lifespan(app: FastAPI):
 
     # Создание таблиц в БД
     Base.metadata.create_all(bind=engine)
-    logger.info(f"База данных: {config.DATABASE_URL}")
+    logger.info(f"База данных: {config.config.DATABASE_URL}")
 
     # Подключаемся к векторной БД
     logger.info("Подключение к Qdrant...")
     global qdrant_client
-    qdrant_client = get_qdrant_client(config.QDRANT_URL)
+    qdrant_client = get_qdrant_client(config.config.QDRANT_URL)
 
     # Создание коллекции в Qdrant (если не существует)
     logger.info("Проверка коллекции в Qdrant...")
-    create_collection(qdrant_client, config.QDRANT_COLLECTION_NAME)
-    logger.info(f"Коллекция '{config.QDRANT_COLLECTION_NAME}' готова")
+    create_collection(qdrant_client, config.config.QDRANT_COLLECTION_NAME)
+    logger.info(f"Коллекция '{config.config.QDRANT_COLLECTION_NAME}' готова")
 
     logger.info("Загрузка embedding моделей...")
     global embedding_service
-    embedding_service = EmbeddingService(cache_dir=config.MODELS_DIR)
+    embedding_service = EmbeddingService(cache_dir=config.config.MODELS_DIR)
     logger.info("Embedding модели загружены:")
-    logger.info(f"  - Dense: {config.DENSE_MODEL_NAME}")
-    logger.info(f"  - Sparse: {config.SPARSE_MODEL_NAME}")
+    logger.info(f"  - Dense: {config.config.DENSE_MODEL_NAME}")
+    logger.info(f"  - Sparse: {config.config.SPARSE_MODEL_NAME}")
 
     # Инициализация Indexing Service
     logger.info("Инициализация Indexing Service...")
@@ -84,13 +84,13 @@ async def lifespan(app: FastAPI):
 
     # Проверка количества транзакций в Qdrant
     try:
-        collection_info = qdrant_client.get_collection(config.QDRANT_COLLECTION_NAME)
+        collection_info = qdrant_client.get_collection(config.config.QDRANT_COLLECTION_NAME)
         points_count = collection_info.points_count
         logger.info(f"Транзакций в Qdrant: {points_count}")
     except Exception as e:
         logger.warning(f"Не удалось получить статистику Qdrant: {e}")
 
-    logger.info(f"Документация: http://{config.API_HOST}:{config.API_PORT}/docs")
+    logger.info(f"Документация: http://{config.config.API_HOST}:{config.config.API_PORT}/docs")
     logger.info("API готов к работе!")
 
     yield  # Приложение работает
@@ -418,3 +418,5 @@ async def query(
     except Exception as e:
         logger.error(f"RAG ошибка: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=f"Ошибка анализа: {str(e)}")
+
+

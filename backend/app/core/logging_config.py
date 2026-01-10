@@ -19,7 +19,8 @@ def setup_logging():
 
     # Корневой логгер
     root_logger = logging.getLogger()
-    root_logger.setLevel(config.LOG_LEVEL)
+    log_level = "DEBUG" if config.ENVIRONMENT == "development" else "INFO"
+    root_logger.setLevel(log_level)
 
     # Очищаем старые хэндлеры (если есть)
     root_logger.handlers.clear()
