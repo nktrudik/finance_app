@@ -1,0 +1,43 @@
+name: iOS CI
+
+# Запуск при пуше и PR в main
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+
+    steps:
+      # Берём код
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Выбираем Xcode 26
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.app || true
+
+      # Установка SwiftLint
+      - name: Install SwiftLint
+        run: brew install swiftlint || true
+
+      # Запуск SwiftLint
+      - name: Run SwiftLint
+        run: |
+        cd ios/Finly
+        swiftlint lint --quiet
+
+
+      # Сборка и тесты на симуляторе
+      - name: Build and Test
+        run: |
+          xcodebuild -workspace ios/Finly.xcworkspace \
+                     -scheme Finly \
+                     -sdk iphonesimulator \
+                     -destination 'platform=iOS Simulator,name=iPhone 17' \
+                     clean test
