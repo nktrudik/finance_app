@@ -21,15 +21,12 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080
 
     # --- ХРАНИЛИЩЕ (Пути для Volumes) ---
-    # В продакшене (Railway) пути должны быть абсолютными к монтированным дискам
     DATA_DIR: Path = STORAGE_DIR / "data"
     MODELS_DIR: Path = STORAGE_DIR / "models"
     LOGS_DIR: Path = STORAGE_DIR / "logs"
     TEMP_DIR: Path = BASE_DIR / "temp"
 
     # --- БАЗЫ ДАННЫХ ---
-    # Если в Railway создана переменная DATABASE_URL (например для Postgres), 
-    # используем её. Иначе — локальный SQLite.
     DATABASE_URL: str = f"sqlite:///{BASE_DIR}/data/app.db"
     
     QDRANT_URL: str = "http://localhost:6333"
@@ -44,11 +41,11 @@ class Settings(BaseSettings):
     DENSE_MODEL_NAME: str = "BAAI/bge-large-en-v1.5"
     SPARSE_MODEL_NAME: str = "Qdrant/bm25"
 
-    # Автоматическая загрузка из .env (только для локальной разработки)
+    # Автоматическая загрузка из .env
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env", 
         env_file_encoding='utf-8',
-        extra='ignore' # Игнорировать лишние переменные
+        extra='ignore'
     )
 
 # Создаем объект конфига

@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 # Копируем все зависимости из бэкенда
 COPY requirements.txt .
 
-# Устанавливаем Python зависимости (опциаонально апгрейдить пип)
+# Устанавливаем Python зависимости
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
