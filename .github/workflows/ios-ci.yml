@@ -24,7 +24,7 @@ jobs:
               run: brew install swiftlint || true
               
             - name: Run SwiftLint
-              run: swiftlint lint ios/Finly
+              run: swiftlint lint --all-files --quiet --strict --path ios/Finly
               
             - name: Build and Test
               run: |
