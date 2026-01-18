@@ -28,7 +28,10 @@ jobs:
 
       # Запуск SwiftLint
       - name: Run SwiftLint
-        run: swiftlint lint ios/Finly/** --quiet
+        run: |
+        cd ios/Finly
+        swiftlint lint --quiet
+
 
       # Сборка и тесты на симуляторе
       - name: Build and Test
