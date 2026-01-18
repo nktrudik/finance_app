@@ -1,9 +1,37 @@
-name: Test CI
+name: iOS CI
 
-on: push
+# Запуск при пуше и PR в main
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
 
 jobs:
-    test:
-        runs-on: macos-14
+    build-and-test:
+        runs-on: macos-latest
+        
         steps:
-            - run: echo "Hello from CI"
+            - name: Checkout repository
+              uses: actions/checkout@v3
+              
+            - name: Set up Xcode
+              uses: maxim-lobanov/setup-xcode@v2
+              with:
+                xcode-version: '26.0'
+                
+            - name: Install SwiftLint
+              run: brew install swiftlint || true
+              
+            - name: Run SwiftLint
+              run: swiftlint
+              
+            - name: Build and Test
+              run: |
+                xcodebuild -workspace ios/Finly.xcworkspace \
+                           -scheme Finly \
+                           -sdk iphonesimulator \
+                           -destination 'platform=iOS Simulator,name=iPhone 17' \
+                           clean test
